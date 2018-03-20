@@ -86,3 +86,47 @@ function animate() {
 	renderer.render( scene, camera );
 
 }
+
+function getWeather(callback) {
+    var weather = 'https://api.openweathermap.org/data/2.5/weather?q=Chicago&APPID=c8a76cd630b38b395dacaefa6e1a4631&&units=imperial';
+    $.ajax({
+      dataType: "jsonp",
+      url: weather,
+      success: callback
+    });
+}
+
+// get data:
+getWeather(function (data) {
+	var adjective = weatherType(data.weather[0].id);
+	$(".weatherBox").html("It is currently " + data.main.temp + " degrees and </br>" + adjective + " in " + data.name);
+});
+
+function weatherType(integer){
+	var adjective = "sunny";
+	var id = Number(String(integer).charAt(0));
+
+	if (id==2){
+		adjective = "thundering";
+	} else if (id==3){
+		adjective = "drizzling";
+	} else if (id==5){
+		adjective = "raining";
+	} else if (id==6){
+		adjective = "snowing";
+	} else if (id==8){
+		if (integer==800){
+			adjective = "clear skies";
+		} else {
+			adjective = "cloudy";
+		}
+	} else if (id==9){
+		adjective = "extreme";
+	}
+
+	return adjective;
+}
+
+function callback(){
+	console.log("Here we are");
+}
