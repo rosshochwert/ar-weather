@@ -1,4 +1,4 @@
-THREEx.ArToolkitContext.baseURL = '/resources/ar.js/';
+THREEx.ArToolkitContext.baseURL = 'resources/ar.js/';
 var renderer, onRenderFcts, scene;
 var camera, mesh;
 init();
