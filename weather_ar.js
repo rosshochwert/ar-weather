@@ -129,7 +129,8 @@ onRenderFcts.push(function(){
 // init controls for camera
 var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
 	type : 'pattern',
-	patternUrl : THREEx.ArToolkitContext.baseURL + 'data/data/pattern-marker.patt',
+	patternUrl : THREEx.ArToolkitContext.baseURL + 'data/data/patt.hiro',
+	//patternUrl : THREEx.ArToolkitContext.baseURL + 'data/data/pattern-marker.patt',
 	// patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
 	// as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
 	changeMatrixMode: 'cameraTransformMatrix'
@@ -141,9 +142,13 @@ scene.visible = false;
 //////////////////////////////////////////////////////////////////////////////////
 //		add an object in the scene
 //////////////////////////////////////////////////////////////////////////////////
-addWeather();
+addSun();
 
-function addWeather(){
+function addRain() {
+
+}
+
+function addSun(){
 	var geometry = new THREE.IcosahedronGeometry(1, 1);
 	var material = new THREE.MeshPhongMaterial({
 		color: 0xffd927,

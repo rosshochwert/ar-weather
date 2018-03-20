@@ -1,6 +1,6 @@
 var camera, scene, renderer;
 var geometry, material, mesh;
-var sphere;
+var sphere, cone;
 
 init();
 animate();
@@ -20,23 +20,27 @@ function init() {
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xff0000 );
-	createCube();
+	//createSun();
+	createRain();
 }
 
-// function createSun(){
-// 	var geometry = new THREE.IcosahedronGeometry(1, 1);
-// 	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-// 	mesh = new THREE.Mesh( geometry, material );
-// 	mesh.castShadow = true;
-//     mesh.receiveShadow = true;
-//     mesh.position.set(0, 0, 0);
 
-// 	scene.add( mesh );
-// 	render();
-// }
+function createRain(){
+	var geometry = new THREE.ConeGeometry(1, 3, 32 );
+	var material = new THREE.MeshPhongMaterial({
+		color: 0x00008b,
+		shading: THREE.FlatShading
+	});
+	cone = new THREE.Mesh( geometry, material );
+	scene.add( cone );
+	//cone.rotateX(60);
+	cone.position.set(0,1,0)
+	addLight();
+	render();
+}
 
-function createCube(){
-	var geometry = new THREE.IcosahedronGeometry(1, 1);
+function createSun(){
+	var geometry = new THREE.IcosahedronGeometry(0.5, 1);
 	var material = new THREE.MeshPhongMaterial({
 		color: 0xffd927,
 		shading: THREE.FlatShading
@@ -44,8 +48,11 @@ function createCube(){
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
-	
+	addLight();
+	render();
+}
 
+function addLight(){
 	// add subtle ambient lighting
     var ambientLight = new THREE.AmbientLight({color: 0x404040, intensity: 0.5});
     scene.add(ambientLight);
@@ -65,9 +72,8 @@ function createCube(){
     light.position.set(200, 100, 200);
     light.castShadow = true;
     scene.add(light);
-
-	render();
 }
+
 
 function render(){
 	renderer = new THREE.WebGLRenderer( { antialias: true, alpha:true } );
@@ -81,8 +87,8 @@ function animate() {
 
 	requestAnimationFrame( animate );
 
-	mesh.rotation.y += 0.005;
-	mesh.rotation.x += 0.005;
+	//mesh.rotation.y += 0.005;
+	//mesh.rotation.x += 0.005;
 	renderer.render( scene, camera );
 
 }
