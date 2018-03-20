@@ -1,0 +1,18 @@
+body { 
+	margin: 0; 
+	background: linear-gradient(135deg, #78d8aa 0%,#50b1ed 52%,#4f68e9 100%);
+}
+canvas { 
+	width: 100%;
+	height: 100%
+}
+
+#info {
+	position: absolute;
+	top: 10px;
+	width: 100%;
+	text-align: center;
+	z-index: 100;
+	display:block;
+	color: aliceblue;
+}
