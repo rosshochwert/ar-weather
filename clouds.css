@@ -1,7 +1,10 @@
+* {
+	font-family: 'Open Sans', sans-serif !important;
+}
 body { 
 	margin: 0; 
 	background: linear-gradient(135deg, #78d8aa 0%,#50b1ed 52%,#4f68e9 100%);
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'Open Sans', sans-serif !important;
 	text-align: center;
 }
 canvas { 
@@ -17,4 +20,23 @@ canvas {
 	z-index: 100;
 	display:block;
 	color: aliceblue;
+}
+
+#controlPanel {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+	z-index: 101;
+}
+
+.weather-image{
+	width: 50px;
+	max-width: 50px;
+}
+
+.bl {
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
+	z-index: 101;
 }

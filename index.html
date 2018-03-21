@@ -2,20 +2,45 @@
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <link rel="stylesheet" type="text/css" href="clouds.css">
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-<script
-  src="https://code.jquery.com/jquery-3.3.1.min.js"
-  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  crossorigin="anonymous"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- three.js library -->
 <script src='node_modules/three/three.min.js'></script>
 <script src='node_modules/ar.js/three.js/build/ar.min.js'></script>
-
+<script src='threex.daynight.js'></script>
+<script src='node_modules/suncalc/suncalc.js'></script>
 
 <body>
-	<div id="info">
-		<h2 class="weatherBox">The weather today is good</h2>
-	</div>
-</div>
+    <div id="ar">
+    	<div id="info">
+	        <h2 class="weatherBox">Loading your weather...</h2>
+        </div>
+		<div id="withAR" class="bl">
+			<a class="btn btn-info" href="/clouds.html">Try it without augmented reality!</a>
+        </div>
+        <div id="controlPanel" class="bg-info">
+        	<div class="row">
+	        	<div class="col">
+					<p id="time">Time of day<input type="range" id="time_range" min="-3.14" max="3.14" step="0.01" oninput="changeTime(this.value)" onchange="changeTime(this.value)"></p>
+	        	</div>
+        	</div>
+        	<div class="row">
+      			<div class="col">
+        			<button type="button" class="btn btn-info" id="clouds"><img class="img-fluid weather-image" src="images/clouds.png" alt="Clouds"></button>
+        		</div>
+        		<div class="col">
+        			<button type="button" class="btn btn-info" id="rain"><img class="img-fluid weather-image" src="images/drop.png" alt="Raining"></button>
+        		</div>
+        		<div class="col">
+        			<button type="button" class="btn btn-info" id="sunny"><img class="img-fluid weather-image" src="images/sun.png" alt="Sunny"></button>
+        		</div>
+      		</div>
+      	</div>
+    </div>
 </body>
+
+
 <script type="text/javascript" src='weather_ar.js'></script>
+
 </html>

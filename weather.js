@@ -1,25 +1,55 @@
 var camera, scene, renderer;
 var geometry, material, mesh;
 var sphere, cone;
-var weather_id;
+var weather_id, sunLight, skydom;
 var cloud_array = [];
 var frustum;
 var cameraViewProjectionMatrix;
+var starField;
+var date;
+var sunAngle;
 
-getWeather(function (data) {
-	var adjective = weatherType(data.weather[0].id);
-	weatherType(data.weather[0].id);
-	$(".weatherBox").html("It is currently " + data.main.temp + " degrees and </br>" + adjective + " in " + data.name);
+var latitude = 41.8889470;
+var longitude = -87.6336350;
+
+$(document).ready(function(){
+	addWeatherListeners();
+	settingsReset();
 	init();
-	animate();
+	render();
+	getLocation();
+	addLight();
 });
 
+function addWeatherListeners(){
+	$("#clouds").on("click", function(){
+		createClouds();
+	});
 
-function changeWeather(i){
-	weather_id = i;
+	$("#rain").on("click", function(){
+		createRain();
+	});
+
+	$("#sunny").on("click", function(){
+		createSun();
+	});
 }
 
 
+function settingsReset(){
+	date = new Date();
+	hour = date.getHours();
+
+	var sunPos = SunCalc.getPosition(/*Date*/ new Date(), /*Number*/ latitude, /*Number*/ longitude);
+	sunAngle = sunPos.altitude;
+	$("#time_range").val(sunAngle);
+	if (sunAngle<0){
+		$("p").css('color', 'white');
+	} else {
+		$("p").css('color', 'black');
+	}
+	
+}
 
 function onResize() {
     width = window.innerWidth;
@@ -30,7 +60,6 @@ function onResize() {
 }
 
 function init() {
-
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.001, 10000 );
 	camera.position.z = 5;
 
@@ -43,18 +72,37 @@ function init() {
 	camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 	cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
 	frustum.setFromMatrix( cameraViewProjectionMatrix );
-	if (weather_id==1){
-		createRain();
-	} else if (weather_id==2){
-		createSun();
-	} else if (weather_id==3){
-		createClouds();
-	}
-	
 }
 
+function removeScene(){
+	var sunObject = scene.getObjectByName("sun", true);
+	scene.remove(sunObject);
+
+	var rainObject = scene.getObjectByName("rain", true);
+	var rainObject1 = scene.getObjectByName("rain1", true);
+	var rainObject2 = scene.getObjectByName("rain2", true);
+	var rainObject3 = scene.getObjectByName("rain3", true);
+	var rainObject4 = scene.getObjectByName("rain4", true);
+	var rainObject5 = scene.getObjectByName("rain5", true);
+	scene.remove(rainObject);
+	scene.remove(rainObject1);
+	scene.remove(rainObject2);
+	scene.remove(rainObject3);
+	scene.remove(rainObject4);
+	scene.remove(rainObject5);
+
+
+	for (var i=0; i<cloud_array.length; i++){
+		var cloudObject = scene.getObjectByName(cloud_array[i], true);
+		scene.remove(cloudObject);
+	}
+}
 
 function createRain(){
+	$("#clouds").removeClass("active");
+	$("#rain").addClass("active");
+	$("#sunny").removeClass("active");
+	removeScene();
 	weather_id=1;
 	var geometry = new THREE.ConeGeometry(1, 3, 32 );
 	var material = new THREE.MeshPhongMaterial({
@@ -64,6 +112,11 @@ function createRain(){
 	cone = new THREE.Mesh( geometry, material );
 	cone2 = new THREE.Mesh( geometry, material );
 	cone3 = new THREE.Mesh( geometry, material );
+
+	cone.name = "rain";
+	cone2.name = "rain1";
+	cone3.name = "rain2";
+
 	scene.add( cone );
 	scene.add( cone2 );
 	scene.add( cone3 );
@@ -79,6 +132,11 @@ function createRain(){
 	sphere = new THREE.Mesh( geometry2, material2 );
 	sphere2 = new THREE.Mesh( geometry2, material2 );
 	sphere3 = new THREE.Mesh( geometry2, material2 );
+
+	sphere.name = "rain3";
+	sphere2.name = "rain4";
+	sphere3.name = "rain5";
+
 	scene.add( sphere );
 	scene.add( sphere2 );
 	scene.add( sphere3 );
@@ -87,27 +145,32 @@ function createRain(){
 	sphere2.position.set(-2,2.4,1);
 	sphere3.position.set(2,0.4,0-1);
 
-
-	addLight();
-	render();
 }
 
 function createSun(){
+	removeScene();
+	$("#clouds").removeClass("active");
+	$("#rain").removeClass("active");
+	$("#sunny").addClass("active");
 	weather_id=2;
-	var geometry = new THREE.IcosahedronGeometry(0.5, 1);
+	var geometry = new THREE.IcosahedronGeometry(1.5, 1);
 	var material = new THREE.MeshPhongMaterial({
 		color: 0xffd927,
 		shading: THREE.FlatShading
 	});
 
+	
 	mesh = new THREE.Mesh( geometry, material );
+	mesh.name="sun";
 	scene.add( mesh );
-	addLight();
-	render();
 }
 
 function createClouds(){
-	weather_id=3;
+	removeScene();
+	$("#clouds").addClass("active");
+	$("#rain").removeClass("active");
+	$("#sunny").removeClass("active");
+
 	for (var i=0; i<100; i++){
 		var geometry = new THREE.IcosahedronGeometry(0.5, 1);
 		var material = new THREE.MeshPhongMaterial({
@@ -125,43 +188,53 @@ function createClouds(){
 		mesh.position.set(random_x,random_y,random_z);
 	}
 
-	addLight();
-	render();
 }
 
 function addLight(){
 	// add subtle ambient lighting
-    var ambientLight = new THREE.AmbientLight({color: 0x404040, intensity: 0.5});
+    var ambientLight = new THREE.AmbientLight({color: 0x000000, intensity: 0.1});
     scene.add(ambientLight);
-
-    // add spotlight for the shadows
-    var spotLight = new THREE.SpotLight(0xffffff);
-    spotLight.position.set(-30, 60, 60);
-    spotLight.castShadow = true;
-    scene.add(spotLight);
-
-    var shadowLight = new THREE.DirectionalLight(0xffffff, 0.4);
-    shadowLight.position.set(200, 200, 200);
-    shadowLight.castShadow = true;
-    scene.add(shadowLight);
 
     var light = new THREE.DirectionalLight();
     light.position.set(200, 100, 200);
-    light.castShadow = true;
+    // light.castShadow = true;
     scene.add(light);
+    addDayNight();
 }
 
+function addDayNight(){
+	sunLight = new THREEx.DayNight.SunLight();
+	skydom	= new THREEx.DayNight.Skydom();
+	starField = new THREEx.DayNight.StarField();
+	scene.add( starField.object3d );
+	scene.add( sunLight.object3d );
+	scene.add( skydom.object3d );
+}
 
 function render(){
-	console.log("setting render");
 	renderer = new THREE.WebGLRenderer( { antialias: true, alpha:true } );
-
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	//document.body.appendChild( renderer.domElement );
+	document.getElementById("ar").appendChild( renderer.domElement );
 	window.addEventListener('resize', onResize);
 }
 
+function changeTime(time){
+	console.log(time);
+	sunAngle = time;
+	if (time<0){
+		$("p").css('color', 'white');
+	} else {
+		$("p").css('color', 'black');
+	}
+}
+
 function animate() {
+
+	sunLight.update(sunAngle);
+	skydom.update(sunAngle);
+	starField.update(sunAngle);
+
 	if (weather_id==1){
 		var direction = new THREE.Vector3(0, -0.05, 0); // amount to move per frame
 		var direction2 = new THREE.Vector3(0, -0.025, 0); // amount to move per frame
@@ -186,7 +259,7 @@ function animate() {
 			sphere3.position.add(direction3);
 		}
 	} else if (weather_id==2){
-		mesh.position.y += 0.005;
+		mesh.rotation.y += 0.005;
 		mesh.rotation.x += 0.005;
 	} else if (weather_id==3){
 		for (var i=0; i<cloud_array.length; i++){
@@ -214,13 +287,49 @@ function animate() {
 
 }
 
-function getWeather(callback) {
-    var weather = 'https://api.openweathermap.org/data/2.5/weather?q=Chicago&APPID=c8a76cd630b38b395dacaefa6e1a4631&&units=imperial';
-    $.ajax({
-      dataType: "jsonp",
-      url: weather,
-      success: callback
-    });
+function getWeatherCallback(data) {
+	var adjective = weatherType(data.weather[0].id);
+	weatherType(data.weather[0].id);
+	$(".weatherBox").html("It is currently " + data.main.temp + " degrees and </br>" + adjective + " in " + data.name);
+	if (weather_id==1){
+		createRain();
+	} else if (weather_id==2){
+		createSun();
+	} else if (weather_id==3){
+		createClouds();
+	}
+	animate();
+}
+
+
+
+function getWeather(callback){
+	var weather = 'https://api.openweathermap.org/data/2.5/weather?q=Chicago&APPID=c8a76cd630b38b395dacaefa6e1a4631&&units=imperial';
+	if (callback.latitude){
+		weather = 'https://api.openweathermap.org/data/2.5/weather?lat=' + callback.latitude +'&lon=' + callback.longitude + '&APPID=c8a76cd630b38b395dacaefa6e1a4631&&units=imperial';
+	}
+
+	$.ajax({
+		dataType: "jsonp",
+		url: weather,
+		success: getWeatherCallback
+	});
+
+}
+
+function getLocation() {
+	var object = {latitude: false};
+	if (navigator.geolocation){
+		navigator.geolocation.getCurrentPosition(function(position) {
+			getWeather(position);
+		}, function (error){
+			getWeather(object);
+		});
+		
+	} else {
+		getWeather(object);
+	}
+    
 }
 
 function weatherType(integer){
@@ -229,7 +338,6 @@ function weatherType(integer){
 
 	if (id==2){
 		adjective = "thundering";
-
 	} else if (id==3){
 		adjective = "drizzling";
 		weather_id = 1;
@@ -251,8 +359,4 @@ function weatherType(integer){
 	}
 
 	return adjective;
-}
-
-function callback(){
-	console.log("Here we are");
 }
