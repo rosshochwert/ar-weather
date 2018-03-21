@@ -1,4 +1,7 @@
 var weather_id;
+THREEx.ArToolkitContext.baseURL = 'node_modules/ar.js/';
+var renderer, onRenderFcts, scene;
+var camera, mesh;
 
 function getWeather(callback) {
     var weather = 'https://api.openweathermap.org/data/2.5/weather?q=Chicago&APPID=c8a76cd630b38b395dacaefa6e1a4631&&units=imperial';
@@ -9,11 +12,14 @@ function getWeather(callback) {
     });
 }
 
-// get data:
 getWeather(function (data) {
 	var adjective = weatherType(data.weather[0].id);
+	weatherType(data.weather[0].id);
 	$(".weatherBox").html("It is currently " + data.main.temp + " degrees and </br>" + adjective + " in " + data.name);
+	init();
 });
+
+
 
 function weatherType(integer){
 	var adjective = "sunny";
@@ -21,33 +27,33 @@ function weatherType(integer){
 
 	if (id==2){
 		adjective = "thundering";
+
 	} else if (id==3){
 		adjective = "drizzling";
+		weather_id = 1;
 	} else if (id==5){
 		adjective = "raining";
+		weather_id = 1;
 	} else if (id==6){
 		adjective = "snowing";
 	} else if (id==8){
 		if (integer==800){
 			adjective = "clear skies";
+			weather_id = 2;
 		} else {
 			adjective = "cloudy";
+			weather_id = 3;
 		}
 	} else if (id==9){
 		adjective = "extreme";
 	}
-	weather_id = id;
+
 	return adjective;
 }
 
 function callback(){
 	console.log("Here we are");
 }
-
-THREEx.ArToolkitContext.baseURL = 'node_modules/ar.js/';
-var renderer, onRenderFcts, scene;
-var camera, mesh;
-init();
 
 function init(){
 	renderer	= new THREE.WebGLRenderer({
@@ -69,6 +75,13 @@ function init(){
 
 	camera = new THREE.Camera();
 	scene.add(camera);
+	if (weather_id==1){
+		createRain();
+	} else if (weather_id==2){
+		createSun();
+	} else if (weather_id==3){
+		createClouds();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,14 +155,47 @@ scene.visible = false;
 //////////////////////////////////////////////////////////////////////////////////
 //		add an object in the scene
 //////////////////////////////////////////////////////////////////////////////////
-addSun();
+function createRain(){
+	weather_id=1;
+	var geometry = new THREE.ConeGeometry(1, 3, 32 );
+	var material = new THREE.MeshPhongMaterial({
+		color: 0x00008b,
+		shading: THREE.FlatShading
+	});
+	cone = new THREE.Mesh( geometry, material );
+	cone2 = new THREE.Mesh( geometry, material );
+	cone3 = new THREE.Mesh( geometry, material );
+	scene.add( cone );
+	scene.add( cone2 );
+	scene.add( cone3 );
+	cone.position.set(0,3,0);
+	cone2.position.set(-2,4,1);
+	cone3.position.set(2,2,-1);
 
-function addRain() {
+	var geometry2 = new THREE.SphereGeometry(1, 32, 32 );
+	var material2 = new THREE.MeshPhongMaterial({
+		color: 0x00008b,
+		shading: THREE.FlatShading
+	});
+	sphere = new THREE.Mesh( geometry2, material2 );
+	sphere2 = new THREE.Mesh( geometry2, material2 );
+	sphere3 = new THREE.Mesh( geometry2, material2 );
+	scene.add( sphere );
+	scene.add( sphere2 );
+	scene.add( sphere3 );
 
+	sphere.position.set(0,1.4,0);
+	sphere2.position.set(-2,2.4,1);
+	sphere3.position.set(2,0.4,0-1);
+
+
+	addLight();
+	render();
 }
 
-function addSun(){
-	var geometry = new THREE.IcosahedronGeometry(1, 1);
+function createSun(){
+	weather_id=2;
+	var geometry = new THREE.IcosahedronGeometry(0.5, 1);
 	var material = new THREE.MeshPhongMaterial({
 		color: 0xffd927,
 		shading: THREE.FlatShading
@@ -157,8 +203,34 @@ function addSun(){
 
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
-	
+	addLight();
+	render();
+}
 
+function createClouds(){
+	weather_id=3;
+	for (var i=0; i<100; i++){
+		var geometry = new THREE.IcosahedronGeometry(0.5, 1);
+		var material = new THREE.MeshPhongMaterial({
+			color: 0xA0A0A0,
+			shading: THREE.FlatShading
+		});
+
+		var mesh = new THREE.Mesh( geometry, material );
+		mesh.name = "q" + i;
+		cloud_array.push(mesh.name);
+		scene.add( mesh );
+		var random_x = Math.random() * Math.floor(3)-1.5;
+		var random_y = Math.random() * Math.floor(1)-0.5;
+		var random_z = Math.random() * Math.floor(2)-1;
+		mesh.position.set(random_x,random_y,random_z);
+	}
+
+	addLight();
+	render();
+}
+
+function addLight(){
 	// add subtle ambient lighting
     var ambientLight = new THREE.AmbientLight({color: 0x404040, intensity: 0.5});
     scene.add(ambientLight);
