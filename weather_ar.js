@@ -254,8 +254,8 @@ function addLight(){
 
 
 onRenderFcts.push(function(delta){
-	mesh.rotation.x += Math.PI*delta;
-	mesh.rotation.y += Math.PI*delta;
+	// mesh.rotation.x += Math.PI*delta;
+	// mesh.rotation.y += Math.PI*delta;
 });
 
 
@@ -265,6 +265,50 @@ onRenderFcts.push(function(delta){
 
 // render the scene
 onRenderFcts.push(function(){
+	if (weather_id==1){
+		var direction = new THREE.Vector3(0, -0.05, 0); // amount to move per frame
+		var direction2 = new THREE.Vector3(0, -0.025, 0); // amount to move per frame
+		var direction3 = new THREE.Vector3(0, -0.1, 0); // amount to move per frame
+		var reset = new THREE.Vector3(0, 10, 0); // amount to move per frame
+	
+		if (sphere.position.y<-7){
+			cone.position.add(reset);
+			sphere.position.add(reset);
+		} else if (sphere2.position.y<-7){
+			cone2.position.add(reset);
+			sphere2.position.add(reset);
+		} else if (sphere3.position.y<-7){
+			cone3.position.add(reset);
+			sphere3.position.add(reset);
+		} else {
+			cone.position.add(direction);
+			sphere.position.add(direction);
+			cone2.position.add(direction2);
+			sphere2.position.add(direction2);
+			cone3.position.add(direction3);
+			sphere3.position.add(direction3);
+		}
+	} else if (weather_id==2){
+		mesh.position.y += 0.005;
+		mesh.rotation.x += 0.005;
+	} else if (weather_id==3){
+		for (var i=0; i<cloud_array.length; i++){
+			var random_x = (Math.random() * 0.002)-0.001;
+			var direction = new THREE.Vector3(random_x, random_x, random_x);
+			var object = scene.getObjectByName(cloud_array[i], true);
+			object.position.add(direction);
+			if (frustum.intersectsObject( object )){
+
+			} else {
+				// var reset_int = object.position.x*1.99;
+				// var reset = new THREE.Vector3(-reset_int, 0, 0);
+				// object.position.add(reset);
+				//alert("off");
+				//console.log("false")
+			}
+			
+		}
+	}
 	renderer.render( scene, camera );
 });
 
