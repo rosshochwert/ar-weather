@@ -6,8 +6,6 @@ var cloud_array = [];
 var frustum;
 var cameraViewProjectionMatrix;
 
-var averageX;
-
 getWeather(function (data) {
 	var adjective = weatherType(data.weather[0].id);
 	weatherType(data.weather[0].id);

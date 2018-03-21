@@ -1,7 +1,10 @@
-var weather_id;
 THREEx.ArToolkitContext.baseURL = 'node_modules/ar.js/';
 var renderer, onRenderFcts, scene;
 var camera, mesh;
+var weather_id;
+var cloud_array = [];
+var frustum;
+var cameraViewProjectionMatrix;
 
 function getWeather(callback) {
     var weather = 'https://api.openweathermap.org/data/2.5/weather?q=Chicago&APPID=c8a76cd630b38b395dacaefa6e1a4631&&units=imperial';
@@ -16,7 +19,13 @@ getWeather(function (data) {
 	var adjective = weatherType(data.weather[0].id);
 	weatherType(data.weather[0].id);
 	$(".weatherBox").html("It is currently " + data.main.temp + " degrees and </br>" + adjective + " in " + data.name);
-	init();
+	if (weather_id==1){
+		createRain();
+	} else if (weather_id==2){
+		createSun();
+	} else if (weather_id==3){
+		createClouds();
+	}
 });
 
 
@@ -75,14 +84,9 @@ function init(){
 
 	camera = new THREE.Camera();
 	scene.add(camera);
-	if (weather_id==1){
-		createRain();
-	} else if (weather_id==2){
-		createSun();
-	} else if (weather_id==3){
-		createClouds();
-	}
 }
+
+init();
 
 ////////////////////////////////////////////////////////////////////////////////
 //          handle arToolkitSource
@@ -190,7 +194,7 @@ function createRain(){
 
 
 	addLight();
-	render();
+	//render();
 }
 
 function createSun(){
@@ -204,7 +208,7 @@ function createSun(){
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
 	addLight();
-	render();
+	//render();
 }
 
 function createClouds(){
@@ -227,7 +231,7 @@ function createClouds(){
 	}
 
 	addLight();
-	render();
+	//render();
 }
 
 function addLight(){
@@ -297,16 +301,6 @@ onRenderFcts.push(function(){
 			var direction = new THREE.Vector3(random_x, random_x, random_x);
 			var object = scene.getObjectByName(cloud_array[i], true);
 			object.position.add(direction);
-			if (frustum.intersectsObject( object )){
-
-			} else {
-				// var reset_int = object.position.x*1.99;
-				// var reset = new THREE.Vector3(-reset_int, 0, 0);
-				// object.position.add(reset);
-				//alert("off");
-				//console.log("false")
-			}
-			
 		}
 	}
 	renderer.render( scene, camera );
