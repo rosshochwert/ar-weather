@@ -21,7 +21,7 @@ THREEx.DayNight.currentPhase	= function(sunAngle){
 
 THREEx.DayNight.StarField	= function(){
 	// create the mesh
-	var texture	= THREE.ImageUtils.loadTexture(THREEx.DayNight.baseURL+'images/galaxy_starfield.png')
+	var texture	= THREE.ImageUtils.loadTexture(THREEx.DayNight.baseURL+'/images/galaxy_starfield.png');
 	var material	= new THREE.MeshBasicMaterial({
 		map	: texture,
 		side	: THREE.BackSide,

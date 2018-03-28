@@ -16,27 +16,30 @@
     	<div id="info">
 	        <h2 class="weatherBox">Loading your weather...</h2>
         </div>
-		<div id="withAR" class="bl">
-			<a class="btn btn-info" href="clouds.html">Try it without augmented reality!</a>
-        </div>
-        <div id="controlPanel" class="bg-info">
-        	<div class="row">
-	        	<div class="col">
-					<p id="time">Time of day<input type="range" id="time_range" min="-3.14" max="3.14" step="0.01" oninput="changeTime(this.value)" onchange="changeTime(this.value)"></p>
+        <div class="row" id="controlPanel">
+        	<div class="col bg-info">
+	        	<div class="row">
+		        	<div class="col">
+						<p id="time">Time of day<input type="range" id="time_range" min="-3.14" max="3.14" step="0.01" oninput="changeTime(this.value)" onchange="changeTime(this.value)"></p>
+		        	</div>
 	        	</div>
+	        	<div class="row">
+	      			<div class="col">
+	        			<button type="button" class="btn btn-info" id="clouds"><img class="img-fluid weather-image" src="images/clouds.png" alt="Clouds"></button>
+	        		</div>
+	        		<div class="col">
+	        			<button type="button" class="btn btn-info" id="rain"><img class="img-fluid weather-image" src="images/drop.png" alt="Raining"></button>
+	        		</div>
+	        		<div class="col">
+	        			<button type="button" class="btn btn-info" id="sunny"><img class="img-fluid weather-image" src="images/sun.png" alt="Sunny"></button>
+	        		</div>
+	      		</div>
+	      		<div class="row center">
+	      			<a class="btn btn-info" href="clouds.html">Click me to try without augmented reality</a>
+	      			<a class="btn btn-info" href="instructions.html">Click here for instructions</a>
+	      		</div>
         	</div>
-        	<div class="row">
-      			<div class="col">
-        			<button type="button" class="btn btn-info" id="clouds"><img class="img-fluid weather-image" src="images/clouds.png" alt="Clouds"></button>
-        		</div>
-        		<div class="col">
-        			<button type="button" class="btn btn-info" id="rain"><img class="img-fluid weather-image" src="images/drop.png" alt="Raining"></button>
-        		</div>
-        		<div class="col">
-        			<button type="button" class="btn btn-info" id="sunny"><img class="img-fluid weather-image" src="images/sun.png" alt="Sunny"></button>
-        		</div>
-      		</div>
-      	</div>
+        </div>
     </div>
 </body>
 

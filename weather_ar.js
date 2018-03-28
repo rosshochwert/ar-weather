@@ -13,12 +13,23 @@ var sunAngle;
 var latitude = 41.8889470;
 var longitude = -87.6336350;
 
+var ua = window.navigator.userAgent;
+var msie = ua.indexOf("MSIE ");
+
+
 $(document).ready(function(){
-	addWeatherListeners();
-	settingsReset();
-	addLight();
-	render();
-	getLocation();
+
+	if (navigator.mediaDevices){
+		addWeatherListeners();
+		settingsReset();
+		addLight();
+		render();
+		getLocation();
+	} else {
+		alert('Your device or browser is not enabled for augmented reality. Try using safari or update your phone to the latest version.');
+	}
+
+	
 });
 
 function addWeatherListeners(){
@@ -153,7 +164,7 @@ function init(){
 		alpha: true
 	});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0);
-	renderer.setSize( 640, 480 );
+	renderer.setSize( window.innerWidth, window.innerHeight);
 	renderer.domElement.style.position = 'absolute';
 	renderer.domElement.style.top = '0px';
 	renderer.domElement.style.left = '0px';
@@ -364,7 +375,6 @@ function render(){
 }
 
 function changeTime(time){
-	console.log(time);
 	sunAngle = time;
 	if (time<0){
 		$("p").css('color', 'white');

@@ -213,14 +213,13 @@ function addDayNight(){
 
 function render(){
 	renderer = new THREE.WebGLRenderer( { antialias: true, alpha:true } );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	//document.body.appendChild( renderer.domElement );
-	document.getElementById("ar").appendChild( renderer.domElement );
+	renderer.setSize( window.innerWidth, window.innerHeight);
+	document.body.appendChild( renderer.domElement );
+	//document.getElementById("ar").appendChild( renderer.domElement );
 	window.addEventListener('resize', onResize);
 }
 
 function changeTime(time){
-	console.log(time);
 	sunAngle = time;
 	if (time<0){
 		$("p").css('color', 'white');
